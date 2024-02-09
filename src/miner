@@ -1,0 +1,38 @@
+#!/bin/bash
+####################################################################################
+###
+### miner for pool.gramcoin.org
+### os.dog integration: shatll(@osdog)
+###
+####################################################################################
+. /dog/colors
+cd `dirname $0`
+
+#	global variables, don`t change it
+####################################################################################
+#	The file contains the following variables:
+#	MINERNAME API_PORT CUSTOM_URL POOL PASS WALLET TEMPLATE COIN ADDITION
+CFG_FILENAME="miner.cfg"
+. $CFG_FILENAME
+
+#	custom package variables
+####################################################################################
+LOG="/dog/log/gramcoin-miner.log"
+
+#	custom package body
+
+#	default values for miner
+args=$ADDITION
+if [[ "$ADDITION" != *"--address"* ]]; then
+  address=${WALLET:1:-1}
+  args+=" --address $address"
+fi
+[[ "$ADDITION" != *"--gpu"* ]] && args+=" --gpu-auto"
+[[ "$ADDITION" != *"--miner"* ]] && args+=" --miner cuda"
+
+$LINE
+echo -e "${GREEN}> Starting custom miner${WHITE}"
+batch="./gram-mining-pool $args"
+#	unbuffer is needed to keep colors with tee
+unbuffer $batch 2>&1 | tee --append $LOG
+
