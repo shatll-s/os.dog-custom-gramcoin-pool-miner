@@ -23,16 +23,16 @@ LOG="/dog/log/gramcoin-miner.log"
 
 #	default values for miner
 args=$ADDITION
-if [[ "$ADDITION" != *"--address"* ]]; then
-  address=${TEMPLATE:1:-1}
-  args+=" --address $address"
-fi
+[[ "$ADDITION" != *"--address"* ]] && args+=" --address $TEMPLATE"
 [[ "$ADDITION" != *"--gpu"* ]] && args+=" --gpu-auto"
 [[ "$ADDITION" != *"--miner"* ]] && args+=" --miner cuda"
 
+
+batch="./gram-mining-pool $args"
 $LINE
 echo -e "${GREEN}> Starting custom miner${WHITE}"
-batch="./gram-mining-pool $args"
+echo "$batch"
+
 #	unbuffer is needed to keep colors with tee
 unbuffer $batch 2>&1 | tee --append $LOG
 
